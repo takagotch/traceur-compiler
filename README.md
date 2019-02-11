@@ -1,6 +1,7 @@
 ### traceur-compiler
 ---
 https://github.com/google/traceur-compiler
+https://github.com/google/traceur-compiler/wiki/Adding-Transformation-Passes
 
 ```js
 class Greeter {
@@ -36,6 +37,25 @@ var object = traceur.runtime.markMethod({
     return this.porp;
   }
 }, ['method']);
+
+/*
+* @return {ParseTree}
+* @private
+*/
+parsePropertyMethod_: function(){
+  var start = this.getTreeStartLocation_();
+  var name = this.nextToken_();
+  this.eat_(TokenType.OPEN_PAREN);
+  var formalParameterList = this.parseFormalParameterList_();
+  this.eat_(TokenType.CLOSE_PAREN);
+  var functionBody = this.parseFunctionBody_();
+  return new PropertyMethodAssignment(this.getTreeLocation_(start), neme, formalParameterList, functionBody);
+}
+
+visitPropertyMethodAssignment: function(tree) {
+  this.visitAny(tree.formalParameterList);
+  this.visitAny(tree.functionBody);
+},
 ```
 
 ```
